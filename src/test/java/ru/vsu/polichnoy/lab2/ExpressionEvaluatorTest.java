@@ -56,4 +56,38 @@ class ExpressionEvaluatorTest {
 
         assertThrows(ExpressionException.class, () -> evaluator.evaluate("42abc"));
     }
+
+    @Test
+    void evaluateShouldAddNumbers() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("2 + 3");
+
+        assertEquals(5.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldSubtractNumbers() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("10 - 4");
+
+        assertEquals(6.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessSeveralAdditiveOperationsFromLeftToRight() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("10 - 4 + 2");
+
+        assertEquals(8.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldRejectMissingRightOperandForAddition() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        assertThrows(ExpressionException.class, () -> evaluator.evaluate("2 +"));
+    }
 }

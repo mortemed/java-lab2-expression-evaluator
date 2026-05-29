@@ -3,7 +3,7 @@ package ru.vsu.polichnoy.lab2;
 /**
  * Парсер математического выражения.
  * <p>
- * На данном этапе поддерживает только разбор одного числа.
+ * Использует рекурсивный спуск.
  */
 public class ExpressionParser {
 
@@ -26,7 +26,7 @@ public class ExpressionParser {
             throw new ExpressionException("Выражение пустое");
         }
 
-        double result = parseNumber();
+        double result = parseExpression();
 
         skipWhitespace();
 
@@ -35,6 +35,26 @@ public class ExpressionParser {
         }
 
         return result;
+    }
+
+    private double parseExpression() {
+        double result = parseTerm();
+
+        while (true) {
+            if (match('+')) {
+                result += parseTerm();
+            } else if (match('-')) {
+                result -= parseTerm();
+            } else {
+                break;
+            }
+        }
+
+        return result;
+    }
+
+    private double parseTerm() {
+        return parseNumber();
     }
 
     private double parseNumber() {
@@ -69,6 +89,17 @@ public class ExpressionParser {
         } catch (NumberFormatException exception) {
             throw new ExpressionException("Некорректное число: " + numberText);
         }
+    }
+
+    private boolean match(char expected) {
+        skipWhitespace();
+
+        if (!isAtEnd() && currentChar() == expected) {
+            position++;
+            return true;
+        }
+
+        return false;
     }
 
     private void skipWhitespace() {

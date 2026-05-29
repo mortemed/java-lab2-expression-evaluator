@@ -68,7 +68,7 @@ public class Main {
         System.out.println("- константы pi и e");
         System.out.println("- сообщения об ошибках при некорректном выражении.");
         System.out.println();
-        System.out.println("На текущем этапе уже поддерживается разбор одного числа. :3");
+        System.out.println("На текущем этапе уже поддерживается числа, сложение и вычитание. :3");
     }
 
     private static String readLine(Scanner scanner, String message) {
