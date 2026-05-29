@@ -10,14 +10,23 @@ public class ExpressionParser {
     private static final double ZERO_EPS = 1e-12;
 
     private final String expression;
+    private final VariableStorage variableStorage;
+    private final VariableProvider variableProvider;
+
     private int position;
 
-    public ExpressionParser(String expression) {
+    public ExpressionParser(String expression, VariableStorage variableStorage, VariableProvider variableProvider) {
         if (expression == null) {
             throw new ExpressionException("Выражение не должно быть null");
         }
 
+        if (variableStorage == null) {
+            throw new IllegalArgumentException("Хранилище переменных не должно быть null");
+        }
+
         this.expression = expression;
+        this.variableStorage = variableStorage;
+        this.variableProvider = variableProvider;
         this.position = 0;
     }
 
@@ -113,7 +122,29 @@ public class ExpressionParser {
             return result;
         }
 
+        if (!isAtEnd() && isIdentifierStart(currentChar())) {
+            String variableName = parseIdentifier();
+            return variableStorage.getOrRequest(variableName, variableProvider);
+        }
+
         return parseNumber();
+    }
+
+    private String parseIdentifier() {
+        skipWhitespace();
+
+        if (isAtEnd() || !isIdentifierStart(currentChar())) {
+            throw new ExpressionException("Ожидалось имя переменной");
+        }
+
+        int start = position;
+        position++;
+
+        while (!isAtEnd() && isIdentifierPart(currentChar())) {
+            position++;
+        }
+
+        return expression.substring(start, position);
     }
 
     private double parseNumber() {
@@ -138,7 +169,7 @@ public class ExpressionParser {
         }
 
         if (!hasDigit) {
-            throw new ExpressionException("Ожидалось число или открывающая скобка");
+            throw new ExpressionException("Ожидалось число, переменная или открывающая скобка");
         }
 
         String numberText = expression.substring(start, position);
@@ -173,5 +204,13 @@ public class ExpressionParser {
 
     private char currentChar() {
         return expression.charAt(position);
+    }
+
+    private boolean isIdentifierStart(char ch) {
+        return Character.isLetter(ch) || ch == '_';
+    }
+
+    private boolean isIdentifierPart(char ch) {
+        return Character.isLetterOrDigit(ch) || ch == '_';
     }
 }

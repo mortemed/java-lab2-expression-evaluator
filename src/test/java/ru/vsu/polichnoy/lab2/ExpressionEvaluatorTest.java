@@ -228,4 +228,67 @@ class ExpressionEvaluatorTest {
 
         assertThrows(ExpressionException.class, () -> evaluator.evaluate("2 + 3)"));
     }
+
+    @Test
+    void evaluateShouldUseVariableValue() {
+        VariableStorage storage = new VariableStorage();
+        storage.set("x", 5.0);
+
+        ExpressionEvaluator evaluator = new ExpressionEvaluator(storage);
+
+        double result = evaluator.evaluate("x + 2");
+
+        assertEquals(7.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldUseSeveralVariables() {
+        VariableStorage storage = new VariableStorage();
+        storage.set("a", 3.0);
+        storage.set("b", 4.0);
+
+        ExpressionEvaluator evaluator = new ExpressionEvaluator(storage);
+
+        double result = evaluator.evaluate("a + b * 2");
+
+        assertEquals(11.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldUseVariableSeveralTimes() {
+        VariableStorage storage = new VariableStorage();
+        storage.set("x", 5.0);
+
+        ExpressionEvaluator evaluator = new ExpressionEvaluator(storage);
+
+        double result = evaluator.evaluate("x * x + x");
+
+        assertEquals(30.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldRequestUnknownVariableOnlyOnce() {
+        VariableStorage storage = new VariableStorage();
+
+        final int[] requestCount = {0};
+
+        VariableProvider provider = name -> {
+            requestCount[0]++;
+            return 5.0;
+        };
+
+        ExpressionEvaluator evaluator = new ExpressionEvaluator(storage, provider);
+
+        double result = evaluator.evaluate("x + x + x");
+
+        assertEquals(15.0, result, EPS);
+        assertEquals(1, requestCount[0]);
+    }
+
+    @Test
+    void evaluateShouldRejectUnknownVariableWithoutProvider() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        assertThrows(ExpressionException.class, () -> evaluator.evaluate("x + 2"));
+    }
 }

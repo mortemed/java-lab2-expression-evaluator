@@ -9,7 +9,13 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        VariableStorage variableStorage = new VariableStorage();
+
+        VariableProvider variableProvider = variableName ->
+                readDouble(scanner, "Введите значение переменной " + variableName + ": ");
+
+        ExpressionEvaluator evaluator = new ExpressionEvaluator(variableStorage, variableProvider);
 
         boolean running = true;
 
@@ -24,6 +30,17 @@ public class Main {
                     break;
                 case "2":
                     printPlannedFeatures();
+                    break;
+                case "3":
+                    variableStorage = new VariableStorage();
+
+                    VariableStorage finalVariableStorage = variableStorage;
+                    variableProvider = variableName ->
+                            readDouble(scanner, "Введите значение переменной " + variableName + ": ");
+
+                    evaluator = new ExpressionEvaluator(finalVariableStorage, variableProvider);
+
+                    System.out.println("Сохранённые значения переменных очищены.");
                     break;
                 case "0":
                     running = false;
@@ -54,25 +71,38 @@ public class Main {
         System.out.println("=== Разбор и вычисление выражения ===");
         System.out.println("1. Ввести выражение и вычислить значение");
         System.out.println("2. Показать поддерживаемый и планируемый функционал");
+        System.out.println("3. Очистить сохранённые значения переменных");
         System.out.println("0. Выйти");
     }
 
     private static void printPlannedFeatures() {
-        System.out.println("Планируемый функционал:");
-        System.out.println("- целые и дробные числа");
-        System.out.println("- операции +, -, *, /, ^");
-        System.out.println("- скобки");
-        System.out.println("- унарный плюс и унарный минус");
-        System.out.println("- переменные с запросом значения");
-        System.out.println("- функции sin, cos, tan, sqrt, abs, ln, log");
-        System.out.println("- константы pi и e");
+        System.out.println("Поддерживаемый и планируемый функционал:");
+        System.out.println("- целые и дробные числа;");
+        System.out.println("- операции +, -, *, /, ^;");
+        System.out.println("- скобки;");
+        System.out.println("- унарный плюс и унарный минус;");
+        System.out.println("- переменные с запросом значения у пользователя;");
+        System.out.println("- функции sin, cos, tan, sqrt, abs, ln, log;");
+        System.out.println("- константы pi и e;");
         System.out.println("- сообщения об ошибках при некорректном выражении.");
         System.out.println();
-        System.out.println("На текущем этапе уже поддерживается числа и + - * / с правильным приоритетом. :3");
+        System.out.println("На текущем этапе уже поддерживаются числа, операции, скобки, степень и переменные.");
     }
 
     private static String readLine(Scanner scanner, String message) {
         System.out.print(message);
         return scanner.nextLine();
+    }
+
+    private static double readDouble(Scanner scanner, String message) {
+        while (true) {
+            String input = readLine(scanner, message);
+
+            try {
+                return Double.parseDouble(input);
+            } catch (NumberFormatException exception) {
+                System.out.println("Ошибка: нужно ввести число.");
+            }
+        }
     }
 }
