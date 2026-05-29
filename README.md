@@ -1,4 +1,4 @@
-to the music from tg@aesthethic_ejemesyachnie
+coding to the music from tg@aesthethic_ejemesyachnie
 
 # Лабораторная работа №2 — Разбор и вычисление выражения
 
