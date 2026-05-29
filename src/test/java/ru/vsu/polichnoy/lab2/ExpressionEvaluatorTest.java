@@ -291,4 +291,98 @@ class ExpressionEvaluatorTest {
 
         assertThrows(ExpressionException.class, () -> evaluator.evaluate("x + 2"));
     }
+
+    @Test
+    void evaluateShouldProcessSqrtFunction() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("sqrt(25)");
+
+        assertEquals(5.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessAbsFunction() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("abs(-10)");
+
+        assertEquals(10.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessSinFunction() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("sin(pi / 2)");
+
+        assertEquals(1.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessCosFunction() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("cos(0)");
+
+        assertEquals(1.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessNaturalLogFunction() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("ln(e)");
+
+        assertEquals(1.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessDecimalLogFunction() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("log(100)");
+
+        assertEquals(2.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessConstants() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("pi + e");
+
+        assertEquals(Math.PI + Math.E, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessFunctionInsideExpression() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("2 + sqrt(16) * 3");
+
+        assertEquals(14.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldRejectUnknownFunction() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        assertThrows(ExpressionException.class, () -> evaluator.evaluate("unknown(10)"));
+    }
+
+    @Test
+    void evaluateShouldRejectSqrtOfNegativeNumber() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        assertThrows(ExpressionException.class, () -> evaluator.evaluate("sqrt(-1)"));
+    }
+
+    @Test
+    void evaluateShouldRejectLogOfNonPositiveNumber() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        assertThrows(ExpressionException.class, () -> evaluator.evaluate("log(0)"));
+        assertThrows(ExpressionException.class, () -> evaluator.evaluate("ln(-5)"));
+    }
 }

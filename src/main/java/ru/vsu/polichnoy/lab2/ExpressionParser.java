@@ -123,18 +123,73 @@ public class ExpressionParser {
         }
 
         if (!isAtEnd() && isIdentifierStart(currentChar())) {
-            String variableName = parseIdentifier();
-            return variableStorage.getOrRequest(variableName, variableProvider);
+            return parseIdentifierOrFunction();
         }
 
         return parseNumber();
+    }
+
+    private double parseIdentifierOrFunction() {
+        String name = parseIdentifier();
+
+        if (name.equals("pi")) {
+            return Math.PI;
+        }
+
+        if (name.equals("e")) {
+            return Math.E;
+        }
+
+        skipWhitespace();
+
+        if (match('(')) {
+            double argument = parseExpression();
+
+            if (!match(')')) {
+                throw new ExpressionException("Ожидалась закрывающая скобка после аргумента функции");
+            }
+
+            return applyFunction(name, argument);
+        }
+
+        return variableStorage.getOrRequest(name, variableProvider);
+    }
+
+    private double applyFunction(String name, double argument) {
+        switch (name) {
+            case "sin":
+                return Math.sin(argument);
+            case "cos":
+                return Math.cos(argument);
+            case "tan":
+                return Math.tan(argument);
+            case "sqrt":
+                if (argument < 0) {
+                    throw new ExpressionException("Корень из отрицательного числа");
+                }
+                return Math.sqrt(argument);
+            case "abs":
+                return Math.abs(argument);
+            case "ln":
+                if (argument <= 0) {
+                    throw new ExpressionException("Логарифм от неположительного числа");
+                }
+                return Math.log(argument);
+            case "log":
+                if (argument <= 0) {
+                    throw new ExpressionException("Логарифм от неположительного числа");
+                }
+                return Math.log10(argument);
+            default:
+                throw new ExpressionException("Неизвестная функция: " + name);
+        }
     }
 
     private String parseIdentifier() {
         skipWhitespace();
 
         if (isAtEnd() || !isIdentifierStart(currentChar())) {
-            throw new ExpressionException("Ожидалось имя переменной");
+            throw new ExpressionException("Ожидалось имя переменной или функции");
         }
 
         int start = position;
@@ -169,7 +224,7 @@ public class ExpressionParser {
         }
 
         if (!hasDigit) {
-            throw new ExpressionException("Ожидалось число, переменная или открывающая скобка");
+            throw new ExpressionException("Ожидалось число, переменная, функция или открывающая скобка");
         }
 
         String numberText = expression.substring(start, position);

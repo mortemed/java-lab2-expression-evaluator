@@ -76,7 +76,7 @@ public class Main {
     }
 
     private static void printPlannedFeatures() {
-        System.out.println("Поддерживаемый и планируемый функционал:");
+        System.out.println("Поддерживаемый функционал:");
         System.out.println("- целые и дробные числа;");
         System.out.println("- операции +, -, *, /, ^;");
         System.out.println("- скобки;");
@@ -85,8 +85,6 @@ public class Main {
         System.out.println("- функции sin, cos, tan, sqrt, abs, ln, log;");
         System.out.println("- константы pi и e;");
         System.out.println("- сообщения об ошибках при некорректном выражении.");
-        System.out.println();
-        System.out.println("На текущем этапе уже поддерживаются числа, операции, скобки, степень и переменные.");
     }
 
     private static String readLine(Scanner scanner, String message) {
