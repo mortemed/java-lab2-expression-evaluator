@@ -142,4 +142,90 @@ class ExpressionEvaluatorTest {
 
         assertThrows(ExpressionException.class, () -> evaluator.evaluate("10 / 0"));
     }
+
+    @Test
+    void evaluateShouldProcessParentheses() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("(2 + 3) * 4");
+
+        assertEquals(20.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessNestedParentheses() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("2 * (3 + (4 - 1))");
+
+        assertEquals(12.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessUnaryMinus() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("-5 + 2");
+
+        assertEquals(-3.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessUnaryPlus() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("+5 + 2");
+
+        assertEquals(7.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessUnaryMinusBeforeParentheses() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("-(2 + 3)");
+
+        assertEquals(-5.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessPower() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("2 ^ 3");
+
+        assertEquals(8.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessRightAssociativePower() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("2 ^ 3 ^ 2");
+
+        assertEquals(512.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessNegativePowerArgument() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("2 ^ -2");
+
+        assertEquals(0.25, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldRejectMissingClosingParenthesis() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        assertThrows(ExpressionException.class, () -> evaluator.evaluate("(2 + 3"));
+    }
+
+    @Test
+    void evaluateShouldRejectExtraClosingParenthesis() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        assertThrows(ExpressionException.class, () -> evaluator.evaluate("2 + 3)"));
+    }
 }

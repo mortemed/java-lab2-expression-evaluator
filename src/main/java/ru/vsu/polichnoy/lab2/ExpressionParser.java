@@ -7,6 +7,8 @@ package ru.vsu.polichnoy.lab2;
  */
 public class ExpressionParser {
 
+    private static final double ZERO_EPS = 1e-12;
+
     private final String expression;
     private int position;
 
@@ -54,15 +56,15 @@ public class ExpressionParser {
     }
 
     private double parseTerm() {
-        double result = parseNumber();
+        double result = parseUnary();
 
         while (true) {
             if (match('*')) {
-                result *= parseNumber();
+                result *= parseUnary();
             } else if (match('/')) {
-                double divisor = parseNumber();
+                double divisor = parseUnary();
 
-                if (Math.abs(divisor) < 1e-12) {
+                if (Math.abs(divisor) < ZERO_EPS) {
                     throw new ExpressionException("Деление на ноль");
                 }
 
@@ -73,6 +75,45 @@ public class ExpressionParser {
         }
 
         return result;
+    }
+
+    private double parseUnary() {
+        if (match('+')) {
+            return parseUnary();
+        }
+
+        if (match('-')) {
+            return -parseUnary();
+        }
+
+        return parsePower();
+    }
+
+    private double parsePower() {
+        double base = parsePrimary();
+
+        if (match('^')) {
+            double exponent = parseUnary();
+            return Math.pow(base, exponent);
+        }
+
+        return base;
+    }
+
+    private double parsePrimary() {
+        skipWhitespace();
+
+        if (match('(')) {
+            double result = parseExpression();
+
+            if (!match(')')) {
+                throw new ExpressionException("Ожидалась закрывающая скобка");
+            }
+
+            return result;
+        }
+
+        return parseNumber();
     }
 
     private double parseNumber() {
@@ -97,7 +138,7 @@ public class ExpressionParser {
         }
 
         if (!hasDigit) {
-            throw new ExpressionException("Ожидалось число");
+            throw new ExpressionException("Ожидалось число или открывающая скобка");
         }
 
         String numberText = expression.substring(start, position);
