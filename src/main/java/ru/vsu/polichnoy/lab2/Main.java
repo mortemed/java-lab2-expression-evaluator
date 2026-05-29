@@ -9,6 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
 
         boolean running = true;
 
@@ -19,7 +20,7 @@ public class Main {
 
             switch (command) {
                 case "1":
-                    System.out.println("Вычисление выражений будет реализовано на следующих этапах. :3 ");
+                    evaluateExpression(scanner, evaluator);
                     break;
                 case "2":
                     printPlannedFeatures();
@@ -36,6 +37,17 @@ public class Main {
         }
 
         scanner.close();
+    }
+
+    private static void evaluateExpression(Scanner scanner, ExpressionEvaluator evaluator) {
+        String expression = readLine(scanner, "Введите выражение: ");
+
+        try {
+            double result = evaluator.evaluate(expression);
+            System.out.println("Результат: " + result);
+        } catch (ExpressionException exception) {
+            System.out.println("Ошибка: " + exception.getMessage());
+        }
     }
 
     private static void printMenu() {
@@ -55,6 +67,8 @@ public class Main {
         System.out.println("- функции sin, cos, tan, sqrt, abs, ln, log");
         System.out.println("- константы pi и e");
         System.out.println("- сообщения об ошибках при некорректном выражении.");
+        System.out.println();
+        System.out.println("На текущем этапе уже поддерживается разбор одного числа. :3");
     }
 
     private static String readLine(Scanner scanner, String message) {
