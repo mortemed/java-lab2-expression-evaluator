@@ -113,7 +113,10 @@ public class VariableStorage {
 
         return -1;
     }
-
+    /**
+     * из прошлой лабы)
+     * увеличивает ёмкость хранилища-контейнера, если нет места для переменных
+     */
     private void grow() {
         int newCapacity = names.length * 2;
 
