@@ -90,4 +90,56 @@ class ExpressionEvaluatorTest {
 
         assertThrows(ExpressionException.class, () -> evaluator.evaluate("2 +"));
     }
+
+    @Test
+    void evaluateShouldMultiplyNumbers() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("6 * 7");
+
+        assertEquals(42.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldDivideNumbers() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("10 / 2");
+
+        assertEquals(5.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldRespectMultiplicationPriority() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("2 + 3 * 4");
+
+        assertEquals(14.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldRespectDivisionPriority() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("10 / 2 + 3");
+
+        assertEquals(8.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldProcessMultiplicationAndDivisionFromLeftToRight() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        double result = evaluator.evaluate("24 / 3 * 2");
+
+        assertEquals(16.0, result, EPS);
+    }
+
+    @Test
+    void evaluateShouldRejectDivisionByZero() {
+        ExpressionEvaluator evaluator = new ExpressionEvaluator();
+
+        assertThrows(ExpressionException.class, () -> evaluator.evaluate("10 / 0"));
+    }
 }

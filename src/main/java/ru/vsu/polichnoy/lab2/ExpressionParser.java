@@ -54,7 +54,25 @@ public class ExpressionParser {
     }
 
     private double parseTerm() {
-        return parseNumber();
+        double result = parseNumber();
+
+        while (true) {
+            if (match('*')) {
+                result *= parseNumber();
+            } else if (match('/')) {
+                double divisor = parseNumber();
+
+                if (Math.abs(divisor) < 1e-12) {
+                    throw new ExpressionException("Деление на ноль");
+                }
+
+                result /= divisor;
+            } else {
+                break;
+            }
+        }
+
+        return result;
     }
 
     private double parseNumber() {
